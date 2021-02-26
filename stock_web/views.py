@@ -229,15 +229,26 @@ def search(httprequest):
             form = SearchForm(httprequest.POST)
             if form.is_valid():
                 queries = []
-                for key, query in [("reagent", "reagent__name__icontains"), ("supplier", "supplier__name__icontains"),
-                                    ("project", "project__name__icontains"),("storage", "storage__name__icontains"),
+                for key, query in [("reagent", "reagent__name__iregex"), ("supplier", "supplier__name__icontains"),
                                    ("lot_no", "lot_no__icontains"), ("int_id","internal__batch_number__exact"),
-                                   ("po", "po__icontains"),
-                                   ("in_stock","finished__lte"),
+                                   ("val_status", "val_id__isnull"),("in_stock","finished__lte"),( "rec_range","date_rec__range"), 
+                                   ("open_range","date_op__range"), ("val_range","val_id__val_date__range"), 
+                                   ("fin_range","date_fin__range"), ("inc_open","is_op__lte"), ("po", "po__icontains"),
+                                   ("project", "project__exact"),("storage", "storage__exact"),
                                   ]:
                     val = form.cleaned_data[key]
+                    if (key=="project" or key == "storage") and val is not None:
+                        val=str(val.id)
                     if val:
-                        queries += ["{}={}".format(query, val)]
+                        if val[0]!=None:
+                            if "range" in query:
+                                val=(val[0].strftime("%Y-%m-%d"), val[1].strftime("%Y-%m-%d"))
+                            if key=="in_stock" and val=="2":
+                                query="finished__exact"
+                                val="1"
+                            if key=="reagent":
+                                val=f'.*{val.replace(" ",".*")}.*'
+                            queries += ["{}={}".format(query, val)]
                 return HttpResponseRedirect(reverse("stock_web:inventory", args=["search", ";".join(queries),"_","1"]))
     else:
         form = SearchForm()
@@ -370,6 +381,16 @@ def inventory(httprequest, search, what, sortby, page):
         query = dict([q.split("=") for q in what.split(";")])
         if search=="search":
             title="Search Results"
+            for key, value in query.items():
+                if "range" in key:
+                    query[key]=value.strip("()").replace("'","").replace(" ","").split(",")
+                if key=="val_id__isnull":
+                    if int(value)==0:
+                        value=False
+                    else:
+                        value=True
+                    
+                    query[key]=value
         elif search=="filter" and "reagent__name__iexact" in query.keys():
             title=query['reagent__name__iexact']
 
