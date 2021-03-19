@@ -795,6 +795,10 @@ def _item_context(httprequest, item, undo):
             title_url.append(reverse("stock_web:changeloc", args=[item.pk]))
         else:
             title_url.append("")
+    if item.reagent.cat_no is not None:
+        title.append("Catalogue Number -")
+        title_values.append(item.reagent.cat_no)
+        title_url.append("")
     if item.po is not None:
         title.append("Purchase Order Number -")
         title_values.append(item.po)
@@ -910,6 +914,10 @@ def _vol_context(httprequest, item, undo):
     if item.project_used_id is not None:
         title.append("Used By Project -")
         title_values.append(item.project_used.name)
+        title_url.append("")
+    if item.reagent.cat_no is not None:
+        title.append("Catalogue Number -")
+        title_values.append(item.reagent.cat_no)
         title_url.append("")
     if item.storage is not None or undo=="undo":
         title.append("Location -")
