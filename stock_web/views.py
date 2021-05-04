@@ -65,16 +65,18 @@ def prime(httprequest):
         messages.success(httprequest, "Database Primed")
         return HttpResponseRedirect(reverse("stock_web:listinv"))
 
-# def vol_migrate(httprequest):
-#     open_items=Inventory.objects.filter(is_op=True, finished=False)
-#     all_reagents=Reagents.objects.all()
-#     counts={}
-#     for reagent in all_reagents:
-#         num_open=open_items.filter(reagent=reagent).count()
-#         reagent.open_no=num_open
-#         reagent.save()
-#     messages.success(httprequest, "Open Item Counts Migrated")
-#     return HttpResponseRedirect(reverse("stock_web:listinv"))
+def vol_migrate(httprequest):
+    open_items=Inventory.objects.filter(is_op=True, finished=False)
+    un_open_items=Inventory.objects.filter(is_op=False, finished=False)
+    all_reagents=Reagents.objects.all()
+    counts={}
+    for reagent in all_reagents:
+        num_open=open_items.filter(reagent=reagent).count()
+        num_unopen=un_open_items.filter(reagent=reagent).count()
+        reagent.open_no=num_open
+        reagent.count_no=num_unopen
+        reagent.save()
+    return HttpResponseRedirect(reverse("stock_web:listinv"))
 
 def _toolbar(httprequest, active=""):
     inventory_dropdown = [{"name":"All", "url":reverse("stock_web:inventory", args=["_", "all","_",1])},
