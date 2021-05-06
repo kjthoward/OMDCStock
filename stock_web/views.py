@@ -560,7 +560,7 @@ def stockreport(httprequest, pk, extension):
         return httpresponse
     return render(httprequest, "stock_web/reportform.html", {"header": header, "form": form, "toolbar": toolbar, "submiturl": submiturl, "cancelurl": cancelurl})
 
-@user_passes_test(is_admin, login_url=UNAUTHURL)
+@user_passes_test(is_logged_in, login_url=LOGINURL)
 @user_passes_test(no_reset, login_url=RESETURL, redirect_field_name=None)
 def invreport(httprequest,what, extension):
     submiturl = reverse("stock_web:invreport",args=[what,extension])
@@ -699,7 +699,7 @@ def label(httprequest):
         pass
     return render(httprequest, "stock_web/labelform.html", {"header": header, "toolbar": toolbar, "submiturl": submiturl, "cancelurl": cancelurl})
 
-@user_passes_test(is_admin, login_url=UNAUTHURL)
+@user_passes_test(is_logged_in, login_url=LOGINURL)
 @user_passes_test(no_reset, login_url=RESETURL, redirect_field_name=None)
 def projreport(httprequest, pk, extension, fin, type):
     submiturl = reverse("stock_web:projreport",args=[pk,extension, fin, type])
