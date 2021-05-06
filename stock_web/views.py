@@ -87,35 +87,31 @@ def _toolbar(httprequest, active=""):
                           {"name":"Not validated", "url":reverse("stock_web:inventory", args=["_", "notvalidated","_",1])},
                           {"name":"List View","url":reverse("stock_web:listinv")},
                           ]
+                          
+    reports_dropdown=[{"name":"Inventory Reports", "url":reverse("stock_web:invreport",args=["_","_"])},
+                       {"name":"Stock Reports", "url":reverse("stock_web:stockreport", args=["_","_"])},
+                       {"name":"Project Reports", "url":reverse("stock_web:projreport",args=["_","_","_", "_"])},
+                       {"name":"Items to Order", "url":reverse("stock_web:toorder")},]
 
     toolbar = [([{"name":"Inventory", "dropdown":inventory_dropdown},
                  {"name":"Recipes", "url":reverse("stock_web:recipes"), "glyphicon":"folder-open"},
                  {"name":"Download Label File", "url":reverse("stock_web:label"), "glyphicon":"barcode"},
-                 {"name":"Stock Reports", "url":reverse("stock_web:stockreport", args=["_","_"]),"glyphicon":"download"},
-                 {"name":"Items to Order", "url":reverse("stock_web:toorder"),"glyphicon":"gbp"},
+                 {"name": "Reports", "glyphicon":"download", "dropdown":reports_dropdown},
                  ], "left")]
 
-    undo_dropdown = [{"name": "Change Default Supplier", "url":reverse("stock_web:changedef", args=["_"])},
-                     {"name": "Edit Minimum Stock Levels", "url":reverse("stock_web:changemin",args=["_"])},
-                     {"name": "(De)Activate Reagents", "url":reverse("stock_web:activreag")},
-                     {"name": "(De)Activate Suppliers", "url":reverse("stock_web:activsup")},
-                     {"name": "(De)Activate Projects", "url":reverse("stock_web:activproj")},
-                     {"name": "(De)Activate Storage Locations", "url":reverse("stock_web:activstore")},
-                     {"name": "Remove Suppliers", "url":reverse("stock_web:removesup")},
-                     {"name": "Remove Project", "url":reverse("stock_web:removeproj")},
-                     {"name": "Remove Storage Location", "url":reverse("stock_web:removestore")},
-                     {"name": "Edit Inventory Item", "url":reverse("stock_web:editinv", args=["_"])}]
-
-
     if httprequest.user.is_staff:
-        toolbar[0][0].pop()
-        toolbar[0][0].pop()
-        reports_dropdown=[{"name":"Inventory Reports", "url":reverse("stock_web:invreport",args=["_","_"])},
-                           {"name":"Stock Reports", "url":reverse("stock_web:stockreport", args=["_","_"])},
-                           {"name":"Project Reports", "url":reverse("stock_web:projreport",args=["_","_","_", "_"])},
-                           {"name":"Items to Order", "url":reverse("stock_web:toorder")},]
-
-        toolbar[0][0].append({"name": "Reports", "glyphicon":"download", "dropdown":reports_dropdown})
+    
+        undo_dropdown = [{"name": "Change Default Supplier", "url":reverse("stock_web:changedef", args=["_"])},
+                         {"name": "Edit Minimum Stock Levels", "url":reverse("stock_web:changemin",args=["_"])},
+                         {"name": "(De)Activate Reagents", "url":reverse("stock_web:activreag")},
+                         {"name": "(De)Activate Suppliers", "url":reverse("stock_web:activsup")},
+                         {"name": "(De)Activate Projects", "url":reverse("stock_web:activproj")},
+                         {"name": "(De)Activate Storage Locations", "url":reverse("stock_web:activstore")},
+                         {"name": "Remove Suppliers", "url":reverse("stock_web:removesup")},
+                         {"name": "Remove Project", "url":reverse("stock_web:removeproj")},
+                         {"name": "Remove Storage Location", "url":reverse("stock_web:removestore")},
+                         {"name": "Edit Inventory Item", "url":reverse("stock_web:editinv", args=["_"])}]
+                         
         toolbar[0][0].append({"name":"Edit Data", "dropdown":undo_dropdown, "glyphicon":"wrench"})
         toolbar[0][0].append({"name":"Update Users", "url":"/stock/admin/auth/user/","glyphicon":"user"})
         new_dropdown = [{"name": "Inventory Item", "url":reverse("stock_web:newinv", args=["_"])},
